@@ -1,4 +1,15 @@
-import ae
+from .ae import *
+from torchsummary import summary
 
 def build_AE():
-    return ae.Autoencoder()
+    return Autoencoder()
+
+def test():
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    autoencoder = build_AE()
+    autoencoder.to(device)
+    channels, H, W = 1, 200, 200
+    x = torch.randn(1,1,200,200).to(device)
+    output = autoencoder(x)
+    print('output shape: ',output.shape)
+    summary(autoencoder, input_size=(channels, H, W))
