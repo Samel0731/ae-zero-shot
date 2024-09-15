@@ -1,17 +1,19 @@
-import torch
+import argparse
 import os
-from tqdm import tqdm
+import torch
+import sys
+from matplotlib import pyplot as plt
+from model import build_AE, test_model_architecture
 from torch.utils.data import DataLoader
 from torchvision import transforms
-from model import build_AE
+from tqdm import tqdm
 from utils.loader import KFoldDataset
-from matplotlib import pyplot as plt
 # PyTorch TensorBoard support
 from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
 
 
-
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 
 def torch_check_GPU():
@@ -125,11 +127,11 @@ def main():
                     epoch_number + 1)
         writer.flush()
 
-        # # Track best performance, and save the model's state
-        # if avg_vloss < best_vloss:
-        #     best_vloss = avg_vloss
-        #     model_path = 'model_{}_{}'.format(timestamp, epoch_number)
-        #     torch.save(autoencoder.state_dict(), model_path)
+        # Track best performance, and save the model's state
+        if avg_vloss < best_vloss:
+            best_vloss = avg_vloss
+            model_path = 'model_{}_{}'.format(timestamp, epoch_number)
+            torch.save(autoencoder.state_dict(), model_path)
 
         epoch_number += 1
 
@@ -140,8 +142,6 @@ def main():
     plt.show
 
 
-from model import test
-# os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 if __name__=='__main__':
-    # main()
-    test()
+    main()
+    # test_model_architecture()
