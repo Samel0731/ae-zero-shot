@@ -1,12 +1,12 @@
 import argparse
 import os
 import torch
+import sys
 from math import ceil
 from matplotlib import pyplot as plt
 from model import build_AE, init_weights, test_model_architecture
 from torch.utils.data import DataLoader
 from torchvision import transforms
-from torchvision.transforms import v2
 from tqdm import tqdm
 from utils.loader import KFoldDataset
 # PyTorch TensorBoard support
@@ -28,7 +28,7 @@ def torch_check_GPU():
     # --------------------------------------------------------------------------
 
 
-def main():
+def main(config_args:argparse.Namespace=None):
     dataset_root = './data'
     field_names = ['p_seabass', 'sea', 'barrel', 'lng', 'noon']
 
@@ -40,7 +40,7 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     epoch_number = 0
 
-    EPOCHS = 200
+    EPOCHS = config_args.epochs
 
     best_vloss = 1_000_000.
     lr = 0.0001
@@ -135,13 +135,38 @@ def main():
 
     # Plot loss curve
     skip_head = 10
-    plt.plot(training_epoch_loss[skip_head:], label='train_loss')
-    plt.plot(validation_epoch_loss[skip_head:],label='val_loss')
+    plt.plot(range(skip_head, len(training_epoch_loss) + 1), training_epoch_loss[skip_head:], label='train_loss')
+    plt.plot(range(skip_head, len(validation_epoch_loss) + 1), validation_epoch_loss[skip_head:],label='val_loss')
     plt.grid()
     plt.legend()
     plt.savefig('loss_curve.png', dpi=300)
 
 
+def parse_args(epilog=None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        epilog=epilog
+        or f"""
+Examples:
+
+Show model Architecture:
+    $ python {sys.argv[0]} -a
+    $ python {sys.argv[0]} --show_architecture
+
+Run on single machine:
+    $ python {sys.argv[0]} 
+""",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+
+    parser.add_argument('-a', '--show_architecture', action='store_true', help='show model architecture')
+    parser.add_argument('-e', '--epochs', type=int, default=200, help="number of epochs")
+    args = parser.parse_args()
+    return args
+
+
 if __name__=='__main__':
-    # main()
-    test_model_architecture()
+    args = parse_args()
+    if args.show_architecture:
+        test_model_architecture()
+        sys.exit(0)
+    main(args)
