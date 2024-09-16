@@ -84,3 +84,32 @@ class DecoderLayer(nn.Module):
         x = self.conv_transpose(x)
         x = self.relu(x)
         return x
+
+
+def init_weights(m):
+    """ Custom weight initialization function
+    """
+    if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):  # Initialize Conv2d or Linear layers
+        if isinstance(m, nn.ConvTranspose2d):  # ConvTranspose2d can also use ReLU
+            # Check the activation type to decide on the initialization
+            if hasattr(m, 'activation') and isinstance(m.activation, nn.ReLU):
+                # He initialization for ReLU
+                nn.init.kaiming_normal_(m.weight, nonlinearity='relu')
+            else:
+                # Xavier initialization for Sigmoid or Tanh
+                nn.init.xavier_normal_(m.weight)
+        else:
+            if hasattr(m, 'activation'):
+                if isinstance(m.activation, nn.ReLU):
+                    # He initialization for ReLU
+                    nn.init.kaiming_normal_(m.weight, nonlinearity='relu')
+                elif isinstance(m.activation, (nn.Sigmoid, nn.Tanh)):
+                    # Xavier initialization for Sigmoid or Tanh
+                    nn.init.xavier_normal_(m.weight)
+            else:
+                # Default: Xavier for safety
+                nn.init.xavier_normal_(m.weight)
+
+        if m.bias is not None:
+            # nn.init.zeros_(m.bias)  # Initialize biases to 0
+            m.bias.data.fill_(0.01)

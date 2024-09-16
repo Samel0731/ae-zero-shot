@@ -105,6 +105,8 @@ data/
 input/
 saved/
 datasets/
+model_2024*
+loss_curve*
 
 # editor, os cache directory
 .vscode/

@@ -3,7 +3,7 @@ import os
 import torch
 from math import ceil
 from matplotlib import pyplot as plt
-from model import build_AE, test_model_architecture
+from model import build_AE, init_weights, test_model_architecture
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision.transforms import v2
@@ -40,7 +40,7 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     epoch_number = 0
 
-    EPOCHS = 5
+    EPOCHS = 200
 
     best_vloss = 1_000_000.
     lr = 0.0001
@@ -66,6 +66,7 @@ def main():
     training_epoch_loss = []
     validation_epoch_loss = []
     autoencoder = build_AE()
+    autoencoder.apply(init_weights)
     autoencoder.to(device)
     optimizer = torch.optim.AdamW(autoencoder.parameters(), lr=lr)
     loss_fn = torch.nn.MSELoss()
@@ -99,6 +100,7 @@ def main():
         avg_loss = train_loss
         # --------------------------------------------------------------------------
 
+        torch.cuda.empty_cache()
         running_vloss = 0.
         autoencoder.eval()
         vbar = tqdm(enumerate(validation_loader), desc=f"Epoch(Validating):[{epoch+1}/{EPOCHS}]", total=viters_per_epoch)
@@ -124,7 +126,7 @@ def main():
         writer.flush()
 
         # Track best performance, and save the model's state
-        if avg_vloss < best_vloss:
+        if avg_vloss < best_vloss and epoch>100:
             best_vloss = avg_vloss
             model_path = 'model_{}_{}'.format(timestamp, epoch_number)
             torch.save(autoencoder.state_dict(), model_path)
@@ -132,12 +134,14 @@ def main():
         epoch_number += 1
 
     # Plot loss curve
-    plt.plot(training_epoch_loss, label='train_loss')
-    plt.plot(validation_epoch_loss,label='val_loss')
+    skip_head = 10
+    plt.plot(training_epoch_loss[skip_head:], label='train_loss')
+    plt.plot(validation_epoch_loss[skip_head:],label='val_loss')
+    plt.grid()
     plt.legend()
     plt.savefig('loss_curve.png', dpi=300)
 
 
 if __name__=='__main__':
-    main()
-    # test_model_architecture()
+    # main()
+    test_model_architecture()
