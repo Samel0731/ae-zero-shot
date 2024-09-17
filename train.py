@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 from model import build_AE, init_weights, test_model_architecture
 from torch.utils.data import DataLoader
 from torchvision import transforms
+from PIL import Image
 from tqdm import tqdm
 from utils.loader import KFoldDataset
 # PyTorch TensorBoard support
@@ -20,11 +21,11 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 def torch_check_GPU():
     # --------------------------------------------------------------------------
     # check GPU
-    torch.cuda.is_available()
-    torch.cuda.device_count()
-    torch.cuda.current_device()
-    torch.cuda.device(0)
-    torch.cuda.get_device_name(0)
+    print(torch.cuda.is_available())
+    print(torch.cuda.device_count())
+    print(torch.cuda.current_device())
+    print(torch.cuda.device(0))
+    print(torch.cuda.get_device_name(0))
     # --------------------------------------------------------------------------
 
 
@@ -50,11 +51,10 @@ def main(config_args:argparse.Namespace=None):
     # Preparing data
     batch_size = 32
     transform = transforms.Compose([
-        transforms.Resize((200,200)),   # Resize images to 200x200
+        transforms.Resize((200,200), Image.BICUBIC),   # Resize images to 200x200
         transforms.RandomHorizontalFlip(p=0.5),
-        transforms.RandAugment(),
-        transforms.ConvertImageDtype(torch.float32)
-        # transforms.ToTensor(),  # Convert images to tensor (values between 0 and 1)
+        # transforms.ConvertImageDtype(torch.float32),
+        transforms.ToTensor(),  # Convert images to tensor (values between 0 and 1)
     ])
     training_set = KFoldDataset(root_dir=dataset_root, field_names=field_names, k=0, train=True, transform=transform)
     validation_set = KFoldDataset(root_dir=dataset_root, field_names=field_names, k=0, train=False, transform=transform)
@@ -139,7 +139,7 @@ def main(config_args:argparse.Namespace=None):
     skip_head = 0 if EPOCHS<=10 or dontskip==True else 10
     plt.plot(range(skip_head, len(training_epoch_loss)), training_epoch_loss[skip_head:], label='train_loss')
     plt.plot(range(skip_head, len(validation_epoch_loss)), validation_epoch_loss[skip_head:],label='val_loss')
-    plt.xticks(range(skip_head, len(training_epoch_loss)))
+    # plt.xticks(range(skip_head, len(training_epoch_loss)))
     plt.grid()
     plt.legend()
     plt.savefig('loss_curve.png', dpi=300)
@@ -162,6 +162,7 @@ Run on single machine:
     )
 
     parser.add_argument('-a', '--show_architecture', action='store_true', help='show model architecture')
+    parser.add_argument('-t', '--test_torch_gpu', action='store_true', help='check pytorch gpu setup')
     parser.add_argument('-e', '--epochs', type=int, default=200, help="number of epochs")
     args = parser.parse_args()
     return args
@@ -169,6 +170,9 @@ Run on single machine:
 
 if __name__=='__main__':
     args = parse_args()
+    if args.test_torch_gpu:
+        torch_check_GPU()
+        sys.exit(0)
     if args.show_architecture:
         test_model_architecture()
         sys.exit(0)
