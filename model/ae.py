@@ -43,6 +43,7 @@ class Decoder(nn.Module):
         # Start with latent space 6x6x512
         self.layer1 = DecoderLayer(in_channels=512, out_channels=256, kernel_size=4, stride=2, padding=1)
         self.layer2 = DecoderLayer(in_channels=256, out_channels=128, kernel_size=4, stride=2, padding=1)
+        # self.layer2 = DecoderLayer(in_channels=128, out_channels=128, kernel_size=4, stride=2, padding=1)
         self.layer3 = DecoderLayer(in_channels=128, out_channels=128, kernel_size=4, stride=2, padding=1, output_padding=1)
         self.layer4 = DecoderLayer(in_channels=128, out_channels=64, kernel_size=5, stride=2, padding=1, output_padding=1)
         self.layer5 = nn.Sequential(
@@ -65,12 +66,14 @@ class EncoderLayer(nn.Module):
         self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=kernel_size, stride=stride, padding=padding)
         self.relu = nn.ReLU(inplace=True)
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.batch_norm = nn.BatchNorm2d(out_channels)
 
     def forward(self, x):
         x = self.conv1(x)
         x = self.conv2(x)
         x = self.relu(x)
         x = self.pool(x)
+        x = self.batch_norm(x)
         return x
 
 

@@ -1,8 +1,10 @@
 from .ae import *
 from torchsummary import summary
 
+
 def build_AE():
     return Autoencoder()
+
 
 def test_model_architecture():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

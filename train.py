@@ -53,7 +53,8 @@ def main(config_args:argparse.Namespace=None):
         transforms.Resize((200,200)),   # Resize images to 200x200
         transforms.RandomHorizontalFlip(p=0.5),
         transforms.RandAugment(),
-        transforms.ToTensor(),  # Convert images to tensor (values between 0 and 1)
+        transforms.ConvertImageDtype(torch.float32)
+        # transforms.ToTensor(),  # Convert images to tensor (values between 0 and 1)
     ])
     training_set = KFoldDataset(root_dir=dataset_root, field_names=field_names, k=0, train=True, transform=transform)
     validation_set = KFoldDataset(root_dir=dataset_root, field_names=field_names, k=0, train=False, transform=transform)
@@ -126,17 +127,19 @@ def main(config_args:argparse.Namespace=None):
         writer.flush()
 
         # Track best performance, and save the model's state
-        if avg_vloss < best_vloss and epoch>100:
+        if avg_vloss < best_vloss and epoch>20:
             best_vloss = avg_vloss
-            model_path = 'model_{}_{}'.format(timestamp, epoch_number)
+            model_path = 'model_{}_{}.pt'.format(timestamp, epoch_number)
             torch.save(autoencoder.state_dict(), model_path)
 
         epoch_number += 1
 
     # Plot loss curve
-    skip_head = 10
-    plt.plot(range(skip_head, len(training_epoch_loss) + 1), training_epoch_loss[skip_head:], label='train_loss')
-    plt.plot(range(skip_head, len(validation_epoch_loss) + 1), validation_epoch_loss[skip_head:],label='val_loss')
+    dontskip = False
+    skip_head = 0 if EPOCHS<=10 or dontskip==True else 10
+    plt.plot(range(skip_head, len(training_epoch_loss)), training_epoch_loss[skip_head:], label='train_loss')
+    plt.plot(range(skip_head, len(validation_epoch_loss)), validation_epoch_loss[skip_head:],label='val_loss')
+    plt.xticks(range(skip_head, len(training_epoch_loss)))
     plt.grid()
     plt.legend()
     plt.savefig('loss_curve.png', dpi=300)

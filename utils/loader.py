@@ -53,9 +53,10 @@ class KFoldDataset(Dataset):
         # img_path = str(self.image_files[actual_index])
         lbl_path = str(self.image_files[actual_index]).replace('images', 'labels')
         # image = Image.open(img_path).convert('L')   # Convert to grayscale ('L' mode)
-        label = Image.open(lbl_path).convert('L')   # Convert to grayscale ('L' mode)
+        # label = Image.open(lbl_path).convert('L')   # Convert to grayscale ('L' mode)
         # image = io.read_image(img_path)
-        # label = io.read_image(lbl_path)
+        label = io.read_image(lbl_path)
+        label = transforms.Grayscale()(label)
         if self.transform:
             # image, label = self.transform(image, label)
             label = self.transform(label)
