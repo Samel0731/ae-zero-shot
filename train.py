@@ -117,8 +117,8 @@ def main(config_args:argparse.Namespace=None):
         validation_epoch_loss.append(avg_vloss)
         print('LOSS train {:.8f} valid {:.8f}'.format(avg_loss, avg_vloss))
 
-        # Fit the Weibull distribution form training data (OpenMax Alg. 1: EVT Meta-Recognition Calibration)
-        _, mavs, dists = compute_train_score_and_mavs_and_dists(len(field_names), training_loader, autoencoder)
+        # # Fit the Weibull distribution form training data (OpenMax Alg. 1: EVT Meta-Recognition Calibration)
+        # _, mavs, dists = compute_train_score_and_mavs_and_dists(len(field_names), training_loader, autoencoder)
 
         writer.add_scalars('Training vs. Validation Loss',
                     { 'Training' : avg_loss, 'Validation' : avg_vloss },
@@ -126,9 +126,9 @@ def main(config_args:argparse.Namespace=None):
         writer.flush()
 
         # Track best performance, and save the model's state
-        if avg_vloss < best_vloss and epoch>20:
+        if avg_vloss < best_vloss and epoch > 20:
             best_vloss = avg_vloss
-            model_path = 'model_{}_{}.pt'.format(timestamp, epoch_number)
+            model_path = 'saved/models/model_{}_{}.pt'.format(timestamp, epoch_number)
             torch.save(autoencoder.state_dict(), model_path)
 
         epoch_number += 1

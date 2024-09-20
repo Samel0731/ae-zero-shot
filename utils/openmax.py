@@ -7,7 +7,6 @@ Copy-paste from Open-Set-Recognition with modifications:
 import numpy as np
 import scipy.spatial.distance as spd
 import torch
-from torcheval.metrics import MeanSquaredError
 
 
 def compute_channel_distances(mavs, features, eu_weight=0.5):

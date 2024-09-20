@@ -27,6 +27,58 @@ class AEDataset(Dataset):
         return image, image
 
 
+class TestDataset(Dataset):
+    def __init__(self, root_dir, field_names=None, transform=None, random_state=403):
+        """
+        Args:
+            root_dir (string): Directory with all the images.
+            transform (callable, optional): Optional transform to be applied on a sample.
+        """
+        self.root_dir = root_dir
+        self.field_names = list([str(i) for i in range(5)]) if field_names==None else field_names
+        self.transform = transform  # Apply transformations if provided
+        # Set random seed for reproducibility
+        self.random_state = random_state
+        np.random.seed(random_state)
+        self.image_files, self.field_idxs = self._get_images_dir()  # List of all image file names
+
+    def __len__(self):
+        return len(self.image_files)
+
+    def __getitem__(self, index):
+        img_path = str(self.image_files[index])
+        image = Image.open(img_path).convert('L')  # Convert to grayscale ('L' mode)
+
+        # Apply any transformations
+        if self.transform:
+            image = self.transform(image)
+
+        return image
+
+    def _get_images_dir(self) -> list:
+        number_fields = len(self.field_names)
+        np.random.seed(self.random_state)
+
+        # Pre-allocate field_img array
+        field_img = [None] * number_fields
+
+        # Use list comprehension for more efficient file listing and shuffling
+        for i, field_name in enumerate(self.field_names):
+            field_path = os.path.join(self.root_dir, 'test_data', field_name)
+            images = glob.glob(os.path.join(field_path, 'labels', '*.png'))
+            np.random.shuffle(images)  # Shuffle the list in-place
+            field_img[i] = images
+
+        # Determine minimum number of images available across all fields
+        min_images = min(len(img_list) for img_list in field_img)
+
+        # Use itertools to efficiently flatten the shuffled images
+        dataset_dir = list(itertools.chain.from_iterable(zip(*[field_img[i][:min_images] for i in range(number_fields)])))
+        dataset_field_id = list(itertools.chain.from_iterable(zip(*[np.full(min_images, i) for i,_ in enumerate(self.field_names)])))
+
+        return dataset_dir, dataset_field_id
+
+
 class KFoldDataset(Dataset):
     def __init__(self, root_dir, field_names, k=0, fold=5, train=False, transform=None, random_state=403, use_torchio=False):
         super().__init__()

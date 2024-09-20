@@ -27,6 +27,7 @@ pip install scikit-learn
 pip install torchsummary
 pip install tqdm
 pip install torcheval
+pip install lpips scikit-image
 ```
 
 ---
@@ -49,54 +50,11 @@ pip install scikit-learn
 pip install torchsummary
 pip install tqdm
 pip install torcheval
+pip install lpips scikit-image
 ```
 
 ## AutoEncoder Architecture
 
 ```
-----------------------------------------------------------------
-        Layer (type)               Output Shape         Param #
-================================================================
-            Conv2d-1         [-1, 64, 100, 100]             640
-              ReLU-2         [-1, 64, 100, 100]               0
-         MaxPool2d-3           [-1, 64, 50, 50]               0
-      EncoderLayer-4           [-1, 64, 50, 50]               0
-            Conv2d-5          [-1, 128, 50, 50]          73,856
-              ReLU-6          [-1, 128, 50, 50]               0
-         MaxPool2d-7          [-1, 128, 25, 25]               0
-      EncoderLayer-8          [-1, 128, 25, 25]               0
-            Conv2d-9          [-1, 256, 25, 25]         295,168
-             ReLU-10          [-1, 256, 25, 25]               0
-        MaxPool2d-11          [-1, 256, 12, 12]               0
-     EncoderLayer-12          [-1, 256, 12, 12]               0
-           Conv2d-13          [-1, 512, 12, 12]       1,180,160
-             ReLU-14          [-1, 512, 12, 12]               0
-        MaxPool2d-15            [-1, 512, 6, 6]               0
-     EncoderLayer-16            [-1, 512, 6, 6]               0
-          Encoder-17            [-1, 512, 6, 6]               0
-  ConvTranspose2d-18          [-1, 256, 12, 12]       2,097,408
-             ReLU-19          [-1, 256, 12, 12]               0
-     DecoderLayer-20          [-1, 256, 12, 12]               0
-  ConvTranspose2d-21          [-1, 128, 24, 24]         524,416
-             ReLU-22          [-1, 128, 24, 24]               0
-     DecoderLayer-23          [-1, 128, 24, 24]               0
-  ConvTranspose2d-24          [-1, 128, 49, 49]         262,272
-             ReLU-25          [-1, 128, 49, 49]               0
-     DecoderLayer-26          [-1, 128, 49, 49]               0
-  ConvTranspose2d-27         [-1, 64, 100, 100]         204,864
-             ReLU-28         [-1, 64, 100, 100]               0
-     DecoderLayer-29         [-1, 64, 100, 100]               0
-  ConvTranspose2d-30          [-1, 1, 200, 200]           1,025
-          Sigmoid-31          [-1, 1, 200, 200]               0
-          Decoder-32          [-1, 1, 200, 200]               0
-================================================================
-Total params: 4,639,809
-Trainable params: 4,639,809
-Non-trainable params: 0
-----------------------------------------------------------------
-Input size (MB): 0.15
-Forward/backward pass size (MB): 47.99
-Params size (MB): 17.70
-Estimated Total Size (MB): 65.84
-----------------------------------------------------------------
+$ python train.py -a
 ```

@@ -12,6 +12,6 @@ def test_model_architecture():
     autoencoder.to(device)
     channels, H, W = 1, 200, 200
     x = torch.randn(1,1,200,200).to(device)
-    output = autoencoder(x)
-    print(f"[{device}] output shape: {output.shape}")
+    latent, recon = autoencoder(x)
+    print(f"[{device}] latent space shape: {latent.shape}, output shape: {recon.shape}")
     summary(autoencoder, input_size=(channels, H, W))
