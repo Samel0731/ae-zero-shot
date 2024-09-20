@@ -12,9 +12,8 @@ class Autoencoder(nn.Module):
     
     def forward(self, imgs):
         latent = self.encoder(imgs)
-        self.latent = latent
         pred = self.decoder(latent)
-        return pred
+        return latent, pred
 
 
 class Encoder(nn.Module):

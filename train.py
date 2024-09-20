@@ -10,6 +10,7 @@ from torchvision import transforms
 from PIL import Image
 from tqdm import tqdm
 from utils.loader import KFoldDataset
+from utils.openmax import compute_train_score_and_mavs_and_dists
 # PyTorch TensorBoard support
 from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
@@ -32,7 +33,6 @@ def torch_check_GPU():
 def main(config_args:argparse.Namespace=None):
     dataset_root = './data'
     field_names = ['p_seabass', 'sea', 'barrel', 'lng', 'noon']
-
 
     # --------------------------------------------------------------------------
     # train setting
@@ -82,14 +82,12 @@ def main(config_args:argparse.Namespace=None):
         # --------------------------------------------------------------------------
         # train one epoch
         train_loss = 0.
-        running_loss = 0.
-        last_loss = 0.
         pbar = tqdm(enumerate(training_loader), desc=f"Epoch: [{epoch+1}/{EPOCHS}] Iter: [{0}/{iters_per_epoch}]", total=iters_per_epoch)
-        for iter, (inputs, labels) in pbar:
+        for iter, (inputs, labels, _) in pbar:
             optimizer.zero_grad()
             inputs = inputs.to(device)
             labels = labels.to(device)
-            outputs = autoencoder(inputs)
+            _, outputs = autoencoder(inputs)
             loss = loss_fn(outputs, labels)
             loss.backward()
             optimizer.step()
@@ -105,21 +103,22 @@ def main(config_args:argparse.Namespace=None):
         running_vloss = 0.
         autoencoder.eval()
         vbar = tqdm(enumerate(validation_loader), desc=f"Epoch(Validating):[{epoch+1}/{EPOCHS}]", total=viters_per_epoch)
-        viter_number = 0
         with torch.no_grad():
             for viter, vdata in vbar:
-                vinputs, vlabels = vdata
+                vinputs, vlabels, _ = vdata
                 vinputs = vinputs.to(device)
                 vlabels = vlabels.to(device)
-                voutputs = autoencoder(vinputs)
+                _, voutputs = autoencoder(vinputs)
                 vloss = loss_fn(voutputs, vlabels)
                 running_vloss += vloss.item()
                 vbar.set_description(f"Epoch(Validating): [{epoch+1}/{EPOCHS}] Iter: [{viter+1}/{viters_per_epoch}] Loss: {running_vloss / (viter+1):.8f}")
-                viter_number = viter
 
         avg_vloss = running_vloss / len(validation_loader)
         validation_epoch_loss.append(avg_vloss)
         print('LOSS train {:.8f} valid {:.8f}'.format(avg_loss, avg_vloss))
+
+        # Fit the Weibull distribution form training data (OpenMax Alg. 1: EVT Meta-Recognition Calibration)
+        _, mavs, dists = compute_train_score_and_mavs_and_dists(len(field_names), training_loader, autoencoder)
 
         writer.add_scalars('Training vs. Validation Loss',
                     { 'Training' : avg_loss, 'Validation' : avg_vloss },
@@ -139,7 +138,6 @@ def main(config_args:argparse.Namespace=None):
     skip_head = 0 if EPOCHS<=10 or dontskip==True else 10
     plt.plot(range(skip_head, len(training_epoch_loss)), training_epoch_loss[skip_head:], label='train_loss')
     plt.plot(range(skip_head, len(validation_epoch_loss)), validation_epoch_loss[skip_head:],label='val_loss')
-    # plt.xticks(range(skip_head, len(training_epoch_loss)))
     plt.grid()
     plt.legend()
     plt.savefig('loss_curve.png', dpi=300)
@@ -154,6 +152,10 @@ Examples:
 Show model Architecture:
     $ python {sys.argv[0]} -a
     $ python {sys.argv[0]} --show_architecture
+
+Pytorch GPU setup check
+    $ python {sys.argv[0]} -t
+    $ python {sys.argv[0]} --test_torch_gpu
 
 Run on single machine:
     $ python {sys.argv[0]} 

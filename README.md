@@ -26,6 +26,7 @@ pip install matplotlib
 pip install scikit-learn
 pip install torchsummary
 pip install tqdm
+pip install torcheval
 ```
 
 ---
@@ -47,6 +48,7 @@ pip install matplotlib
 pip install scikit-learn
 pip install torchsummary
 pip install tqdm
+pip install torcheval
 ```
 
 ## AutoEncoder Architecture
