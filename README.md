@@ -58,3 +58,29 @@ pip install lpips scikit-image
 ```
 $ python train.py -a
 ```
+
+## Folder tree
+
+```
+├── data
+│   ├── test_data
+│   └── train_data
+├── model
+│   ├── ae.py
+│   ├── __init__.py
+├── saved
+│   └── models
+├── test_something
+│   └── function_test.ipynb
+└── utils
+    ├── loader.py
+    ├── openmax.py
+├── .gitattributes
+├── .gitignore
+├── inference.ipynb
+├── loss_curve.png
+├── README.md
+├── requirements.txt
+├── test.py
+├── train.py
+```
