@@ -51,6 +51,11 @@ pip install torchsummary
 pip install tqdm
 pip install torcheval
 pip install lpips scikit-image
+
+# libmr
+sudo apt install gcc g++
+pip install cython
+pip installl libmr
 ```
 
 ## AutoEncoder Architecture
@@ -70,15 +75,10 @@ $ python train.py -a
 │   ├── __init__.py
 ├── saved
 │   └── models
-├── test_something
-│   └── function_test.ipynb
 └── utils
     ├── loader.py
     ├── openmax.py
-├── .gitattributes
-├── .gitignore
 ├── inference.ipynb
-├── loss_curve.png
 ├── README.md
 ├── requirements.txt
 ├── test.py
