@@ -47,13 +47,14 @@ class TestDataset(Dataset):
 
     def __getitem__(self, index):
         img_path = str(self.image_files[index])
+        img_field_idx = self.field_idxs[index]
         image = Image.open(img_path).convert('L')  # Convert to grayscale ('L' mode)
 
         # Apply any transformations
         if self.transform:
             image = self.transform(image)
 
-        return image
+        return image, img_field_idx
 
     def _get_images_dir(self) -> list:
         number_fields = len(self.field_names)
