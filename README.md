@@ -52,6 +52,7 @@ pip install tqdm
 pip install torcheval
 pip install lpips scikit-image
 pip install seaborn
+pip install timm==0.3.2 tensorboardX six
 
 # libmr
 sudo apt install gcc g++

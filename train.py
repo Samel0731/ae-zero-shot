@@ -49,7 +49,7 @@ def main(config_args:argparse.Namespace=None):
 
     # --------------------------------------------------------------------------
     # Preparing data
-    batch_size = 32
+    batch_size = 16
     transform = transforms.Compose([
         transforms.Resize((200,200), Image.BICUBIC),   # Resize images to 200x200
         transforms.RandomHorizontalFlip(p=0.5),
@@ -128,6 +128,11 @@ def main(config_args:argparse.Namespace=None):
         # Track best performance, and save the model's state
         if avg_vloss < best_vloss and epoch > 20:
             best_vloss = avg_vloss
+            model_path = 'saved/models/model_best_vloss.pt'
+            torch.save(autoencoder.state_dict(), model_path)
+        
+        # Save the model's state every 10 epochs
+        if (epoch % 50 == 0 or epoch+1==EPOCHS) and epoch > 0:
             model_path = 'saved/models/model_{}_{}.pt'.format(timestamp, epoch_number)
             torch.save(autoencoder.state_dict(), model_path)
 
@@ -135,7 +140,7 @@ def main(config_args:argparse.Namespace=None):
 
     # Plot combined loss curve
     plt.figure()
-    plt.subplot(2, 1, 1)
+    plt.subplot(1, 2, 1)
     plt.plot(range(len(training_epoch_loss)), training_epoch_loss, label='train_loss')
     plt.plot(range(len(validation_epoch_loss)), validation_epoch_loss, label='val_loss')
     plt.grid()
@@ -143,7 +148,7 @@ def main(config_args:argparse.Namespace=None):
     plt.title('Loss Curve')
 
     skip_head = 10
-    plt.subplot(2, 1, 2)
+    plt.subplot(1, 2, 2)
     plt.plot(range(skip_head, len(training_epoch_loss)), training_epoch_loss[skip_head:], label='train_loss')
     plt.plot(range(skip_head, len(validation_epoch_loss)), validation_epoch_loss[skip_head:], label='val_loss')
     plt.grid()
