@@ -51,6 +51,7 @@ pip install torchsummary
 pip install tqdm
 pip install torcheval
 pip install lpips scikit-image
+pip install seaborn
 
 # libmr
 sudo apt install gcc g++

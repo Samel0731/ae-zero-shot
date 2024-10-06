@@ -39,7 +39,7 @@ def evaluate_autoencoder(autoencoder, test_loader, device):
     autoencoder.eval()  # Set model to evaluation mode
 
     with torch.no_grad():  # No need for gradients during evaluation
-        for imgs in test_loader:
+        for imgs, _ in test_loader:
             imgs = imgs.to(device)
             
             # Forward pass through the autoencoder
@@ -100,10 +100,10 @@ def main():
     # Load the trained model
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     autoencoder = build_AE()  # Make sure this matches the original model architecture
-    autoencoder.load_state_dict(torch.load('saved/models/model_20240920_121522_97.pt', weights_only=True))
+    autoencoder.load_state_dict(torch.load('saved/models/model_20240928_204659_99.pt', weights_only=True))
     autoencoder.to(device)
     autoencoder50 = build_AE()  # Make sure this matches the original model architecture
-    autoencoder50.load_state_dict(torch.load('saved/models/model_20240920_121522_50.pt', weights_only=True))
+    autoencoder50.load_state_dict(torch.load('saved/models/model_20240928_204659_50.pt', weights_only=True))
     autoencoder50.to(device)
     # --------------------------------------------------------------------------
 

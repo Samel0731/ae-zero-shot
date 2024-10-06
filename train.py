@@ -133,14 +133,41 @@ def main(config_args:argparse.Namespace=None):
 
         epoch_number += 1
 
-    # Plot loss curve
-    dontskip = False
-    skip_head = 0 if EPOCHS<=10 or dontskip==True else 10
-    plt.plot(range(skip_head, len(training_epoch_loss)), training_epoch_loss[skip_head:], label='train_loss')
-    plt.plot(range(skip_head, len(validation_epoch_loss)), validation_epoch_loss[skip_head:],label='val_loss')
+    # Plot combined loss curve
+    plt.figure()
+    plt.subplot(2, 1, 1)
+    plt.plot(range(len(training_epoch_loss)), training_epoch_loss, label='train_loss')
+    plt.plot(range(len(validation_epoch_loss)), validation_epoch_loss, label='val_loss')
     plt.grid()
     plt.legend()
-    plt.savefig('loss_curve.png', dpi=300)
+    plt.title('Loss Curve')
+
+    skip_head = 10
+    plt.subplot(2, 1, 2)
+    plt.plot(range(skip_head, len(training_epoch_loss)), training_epoch_loss[skip_head:], label='train_loss')
+    plt.plot(range(skip_head, len(validation_epoch_loss)), validation_epoch_loss[skip_head:], label='val_loss')
+    plt.grid()
+    plt.legend()
+    plt.title('Loss Curve (Skip First 10 Epochs)')
+
+    plt.tight_layout()
+    plt.savefig('combined_loss_curve.png', dpi=300)
+
+    # # Plot loss curve
+    # plt.figure()
+    # plt.plot(range(len(training_epoch_loss)), training_epoch_loss, label='train_loss')
+    # plt.plot(range(len(validation_epoch_loss)), validation_epoch_loss,label='val_loss')
+    # plt.grid()
+    # plt.legend()
+    # plt.savefig('loss_curve.png', dpi=300)
+
+    # skip_head = 10
+    # plt.figure() # Skip the first 10 epochs
+    # plt.plot(range(skip_head, len(training_epoch_loss)), training_epoch_loss[skip_head:], label='train_loss')
+    # plt.plot(range(skip_head, len(validation_epoch_loss)), validation_epoch_loss[skip_head:],label='val_loss')
+    # plt.grid()
+    # plt.legend()
+    # plt.savefig('loss_curve_skip_10.png', dpi=300)
 
 
 def parse_args(epilog=None) -> argparse.Namespace:

@@ -22,8 +22,8 @@ class Encoder(nn.Module):
     def __init__(self):
         super().__init__()
 
-        self.layer1 = EncoderLayer(in_channels=1, out_channels=64, stride=2, batch_norm=False)
-        self.layer2 = EncoderLayer(in_channels=64, out_channels=128, stride=2, batch_norm=False)
+        self.layer1 = EncoderLayer(in_channels=1, out_channels=32, stride=2, batch_norm=False)
+        self.layer2 = EncoderLayer(in_channels=32, out_channels=16, stride=2, batch_norm=False)
         # self.layer3 = EncoderLayer(in_channels=128, out_channels=256, batch_norm=False)
         # self.layer4 = EncoderLayer(in_channels=256, out_channels=512, batch_norm=False)
 
@@ -42,11 +42,11 @@ class Decoder(nn.Module):
         # Start with latent space 6x6x512
         # self.layer1 = DecoderLayer(in_channels=512, out_channels=256, kernel_size=4, stride=2, padding=1)
         # self.layer2 = DecoderLayer(in_channels=256, out_channels=128, kernel_size=4, stride=2, padding=1)
-        self.layer2 = DecoderLayer(in_channels=128, out_channels=128, kernel_size=4, stride=2, padding=1)
-        self.layer3 = DecoderLayer(in_channels=128, out_channels=128, kernel_size=4, stride=2, padding=1, output_padding=1)
-        self.layer4 = DecoderLayer(in_channels=128, out_channels=64, kernel_size=5, stride=2, padding=1, output_padding=1)
+        self.layer2 = DecoderLayer(in_channels=16, out_channels=16, kernel_size=4, stride=2, padding=1)
+        self.layer3 = DecoderLayer(in_channels=16, out_channels=32, kernel_size=4, stride=2, padding=1, output_padding=1)
+        self.layer4 = DecoderLayer(in_channels=32, out_channels=32, kernel_size=5, stride=2, padding=1, output_padding=1)
         self.layer5 = nn.Sequential(
-            nn.ConvTranspose2d(64, 1, kernel_size=4, stride=2, padding=1, output_padding=0),
+            nn.ConvTranspose2d(32, 1, kernel_size=4, stride=2, padding=1, output_padding=0),
             nn.Sigmoid()
         )
 
