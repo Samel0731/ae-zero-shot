@@ -66,7 +66,7 @@ def main(config_args:argparse.Namespace=None):
 
     training_epoch_loss = []
     validation_epoch_loss = []
-    autoencoder = build_AE()
+    autoencoder = build_AE(encoder_type='convnext')
     autoencoder.apply(init_weights)
     autoencoder.to(device)
     optimizer = torch.optim.AdamW(autoencoder.parameters(), lr=lr)

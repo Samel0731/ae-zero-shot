@@ -99,10 +99,10 @@ def main():
     # --------------------------------------------------------------------------
     # Load the trained model
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    autoencoder = build_AE()  # Make sure this matches the original model architecture
+    autoencoder = build_AE(encoder_type='convnext')  # Make sure this matches the original model architecture
     autoencoder.load_state_dict(torch.load('saved/models/model_20240928_204659_99.pt', weights_only=True))
     autoencoder.to(device)
-    autoencoder50 = build_AE()  # Make sure this matches the original model architecture
+    autoencoder50 = build_AE(encoder_type='convnext')  # Make sure this matches the original model architecture
     autoencoder50.load_state_dict(torch.load('saved/models/model_20240928_204659_50.pt', weights_only=True))
     autoencoder50.to(device)
     # --------------------------------------------------------------------------
