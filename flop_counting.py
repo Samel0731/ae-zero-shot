@@ -43,7 +43,7 @@ def deepspeed_flop_counter():
     batch_size = 5
     input_shape = (batch_size, 1, 200, 200)
     flops, macs, params = get_model_profile(model, input_shape)
-    print(flops, macs, params)
+    print(flops, macs, params)  # 1.02 G 508.79 MMACs 138.48 K
 
 if __name__ == '__main__':
     deepspeed_flop_counter()
