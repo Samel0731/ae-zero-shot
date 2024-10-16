@@ -16,6 +16,7 @@ conda install pytorch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 pytorch-cuda=
 ----------------------------------------------------------------
 # solved
 conda install cudatoolkit=11.4
+conda install -c conda-forge cudatoolkit-dev=11.4
 
 # if numpy version>=2
 pip uninstall numpy
@@ -103,6 +104,32 @@ Forward/backward pass size (MB): 60.11
 Params size (MB): 3.77
 Estimated Total Size (MB): 64.03
 ----------------------------------------------------------------
+```
+
+## Flop Counter for PyTorch Models
+
+[CNN parameters、FLOPs、MACs、MAC、CIO 計算, 謦伊的閱讀筆記 李謦伊](https://medium.com/ching-i/cnn-parameters-flops-macs-cio-%E8%A8%88%E7%AE%97-9575d61765cc)
+
+```sh
+pip install -U fvcore   # https://github.com/facebookresearch/fvcore/tree/main
+pip install thop
+pip install ptflops
+
+# 2080 ti cuda 11.4 install deepspeed in conda env error
+# × python setup.py egg_info did not run successfully.
+#   │ exit code: 1
+#   ╰─> [8 lines of output]
+#       Traceback (most recent call last):
+#         File "<string>", line 2, in <module>
+#         File "<pip-setuptools-caller>", line 34, in <module>
+#         File "/tmp/pip-install-e4tnxu3e/deepspeed_2aa4cd0cfa5a44b7ab4e1d80639c2503/setup.py", line 109, in <module>
+#           cuda_major_ver, cuda_minor_ver = installed_cuda_version()
+#         File "/tmp/pip-install-e4tnxu3e/deepspeed_2aa4cd0cfa5a44b7ab4e1d80639c2503/op_builder/builder.py", line 51, in installed_cuda_version
+#           raise MissingCUDAException("CUDA_HOME does not exist, unable to compile CUDA op(s)")
+#       op_builder.builder.MissingCUDAException: CUDA_HOME does not exist, unable to compile CUDA op(s)
+# solve by install cudatoolkit-dev
+conda install -c conda-forge cudatoolkit-dev=11.4
+pip install deepspeed
 ```
 
 ## Folder tree
