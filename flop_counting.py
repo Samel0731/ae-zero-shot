@@ -40,7 +40,7 @@ def deepspeed_flop_counter():
     from deepspeed.profiling.flops_profiler import get_model_profile
 
     model = build_AE(encoder_type='convnext')
-    batch_size = 5
+    batch_size = 1
     input_shape = (batch_size, 1, 200, 200)
     flops, macs, params = get_model_profile(model, input_shape)
     print(flops, macs, params)  # 1.02 G 508.79 MMACs 138.48 K
